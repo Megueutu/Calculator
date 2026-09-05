@@ -1,26 +1,39 @@
 <script setup lang="ts">
-import Versions from './components/Versions.vue'
 
-const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+import { ref, onMounted, onUnmounted } from 'vue';
+import Keyboard from './components/Keyboard.vue';
+
+const STACK = ref(0);
+const root = ref<HTMLElement | null>(null);
+
+function getStack() {
+  return STACK;
+}
+
+let observer: ResizeObserver | null = null;
+
+onMounted(() => {
+  if (!root.value) return;
+
+  observer = new ResizeObserver(([entry]) => {
+    const { width, height } = entry.contentRect;
+    window.api.resizeWindow(width, height);
+  });
+
+  observer.observe(root.value);
+});
+
+onUnmounted(() => {
+  observer?.disconnect();
+});
+
 </script>
 
 <template>
-  <img alt="logo" class="logo" src="./assets/electron.svg" />
-  <div class="creator">Powered by electron-vite</div>
-  <div class="text">
-    Build an Electron app with
-    <span class="vue">Vue</span>
-    and
-    <span class="ts">TypeScript</span>
-  </div>
-  <p class="tip">Please try pressing <code>F12</code> to open the devTool</p>
-  <div class="actions">
-    <div class="action">
-      <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">Documentation</a>
+  <main ref="root">
+    <input type="text" :value="STACK" />
+    <div class="">
+      <Keyboard />
     </div>
-    <div class="action">
-      <a target="_blank" rel="noreferrer" @click="ipcHandle">Send IPC</a>
-    </div>
-  </div>
-  <Versions />
+  </main>
 </template>
