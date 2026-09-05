@@ -6,9 +6,12 @@ import icon from '../../resources/icon.png?asset'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 200,
+    height: 800,
     show: false,
+    transparent: true,
+    resizable: false,
+    frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -19,6 +22,10 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+
+  ipcMain.on('resize-window', (_event, { width, height }: { width: number; height: number }) => {
+    mainWindow.setContentSize(Math.round(width), Math.round(height))
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
