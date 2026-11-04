@@ -1,0 +1,4 @@
+# keep vue as the main language in github's stats
+# electron glue and build config stay in the repo, only out of the stats
+src/preload/** linguist-detectable=false
+electron.vite.config.ts linguist-detectable=false
